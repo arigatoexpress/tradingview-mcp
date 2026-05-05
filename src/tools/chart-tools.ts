@@ -6,10 +6,7 @@
 import { z } from "zod";
 import { BrowserAutomation } from "../services/browser-automation.js";
 
-export function registerChartTools(
-  server: any,
-  browser: BrowserAutomation
-) {
+export function registerChartTools(server: any, browser: BrowserAutomation) {
   server.tool(
     "tv_capture_chart",
     "Capture a screenshot of a TradingView chart with your premium indicators and layouts. Returns base64 image.",
@@ -113,7 +110,9 @@ export function registerChartTools(
     "tv_navigate",
     "Navigate to a specific TradingView page (e.g., /screener, /ideas, /chart)",
     {
-      path: z.string().describe("Path or full URL (e.g., '/screener/', 'https://www.tradingview.com/ideas/')"),
+      path: z
+        .string()
+        .describe("Path or full URL (e.g., '/screener/', 'https://www.tradingview.com/ideas/')"),
     },
     async ({ path }: { path: string }) => {
       try {
@@ -140,34 +139,29 @@ export function registerChartTools(
     }
   );
 
-  server.tool(
-    "tv_page_info",
-    "Get the current TradingView page URL and title",
-    {},
-    async () => {
-      try {
-        const info = await browser.getPageInfo();
-        return {
-          content: [
-            {
-              type: "text" as const,
-              text: JSON.stringify(info, null, 2),
-            },
-          ],
-        };
-      } catch (err) {
-        return {
-          content: [
-            {
-              type: "text" as const,
-              text: `Error: ${err instanceof Error ? err.message : String(err)}`,
-            },
-          ],
-          isError: true,
-        };
-      }
+  server.tool("tv_page_info", "Get the current TradingView page URL and title", {}, async () => {
+    try {
+      const info = await browser.getPageInfo();
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text: JSON.stringify(info, null, 2),
+          },
+        ],
+      };
+    } catch (err) {
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text: `Error: ${err instanceof Error ? err.message : String(err)}`,
+          },
+        ],
+        isError: true,
+      };
     }
-  );
+  });
 
   server.tool(
     "tv_execute_js",

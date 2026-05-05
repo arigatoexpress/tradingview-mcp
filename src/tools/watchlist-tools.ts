@@ -5,10 +5,7 @@
 import { z } from "zod";
 import { BrowserAutomation } from "../services/browser-automation.js";
 
-export function registerWatchlistTools(
-  server: any,
-  browser: BrowserAutomation
-) {
+export function registerWatchlistTools(server: any, browser: BrowserAutomation) {
   server.tool(
     "tv_get_watchlist",
     "Get the current TradingView watchlist contents",

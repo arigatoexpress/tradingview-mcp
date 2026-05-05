@@ -140,7 +140,9 @@ async function main() {
     console.error(
       `[TradingView MCP] Webhook server failed to start on port ${webhookPort}: ${err instanceof Error ? err.message : String(err)}`
     );
-    console.error("[TradingView MCP] Webhook tools will still work but won't receive real-time alerts");
+    console.error(
+      "[TradingView MCP] Webhook tools will still work but won't receive real-time alerts"
+    );
   }
 
   // Handle graceful shutdown
@@ -165,7 +167,9 @@ async function main() {
   await server.connect(transport);
 
   console.error("[TradingView MCP] Server connected and ready");
-  console.error(`[TradingView MCP] Session: ${sessionId ? "authenticated (premium)" : "unauthenticated (free tier)"}`);
+  console.error(
+    `[TradingView MCP] Session: ${sessionId ? "authenticated (premium)" : "unauthenticated (free tier)"}`
+  );
   console.error(`[TradingView MCP] 26 tools registered across 6 categories`);
 }
 

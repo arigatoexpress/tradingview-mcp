@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [master, main]
   pull_request:
-    branches: [master]
+    branches: [master, main]
   workflow_dispatch:
 
 concurrency:
@@ -12,22 +12,18 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # No-spend posture: when this satellite repo is run on the shared
-  # self-hosted Sapphire runner, /Users/aribs is the home dir, not
-  # /Users/runner. Keeping setup-node's tool cache writable avoids
-  # falling back to a paid hosted runner on cache miss.
+  # No-spend posture: keep Node tooling on Ari's shared self-hosted runner.
   AGENT_TOOLSDIRECTORY: /Users/aribs/.github-runners/toolcache
   RUNNER_TOOL_CACHE: /Users/aribs/.github-runners/toolcache
 
 permissions:
   contents: read
-  pull-requests: read
 
 jobs:
-  test:
-    name: Unit tests (Node 20)
+  lint:
+    name: Lint & Format
     if: ${{ vars.SAPPHIRE_RUNNER != '' }}
-    runs-on: ${{ fromJSON(vars.SAPPHIRE_RUNNER || '"ubuntu-latest"') }}
+    runs-on: ${{ fromJSON(vars.SAPPHIRE_RUNNER || '["self-hosted","sapphire-disabled"]') }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -39,7 +35,76 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Run unit tests
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Check Prettier formatting
+        run: npm run format:check
+
+  typecheck:
+    name: Type Check
+    if: ${{ vars.SAPPHIRE_RUNNER != '' }}
+    runs-on: ${{ fromJSON(vars.SAPPHIRE_RUNNER || '["self-hosted","sapphire-disabled"]') }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run TypeScript compiler
+        run: npm run typecheck
+
+  test:
+    name: Unit Tests
+    if: ${{ vars.SAPPHIRE_RUNNER != '' }}
+    runs-on: ${{ fromJSON(vars.SAPPHIRE_RUNNER || '["self-hosted","sapphire-disabled"]') }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
         run: npm test
+
+  build:
+    name: Build Verification
+    if: ${{ vars.SAPPHIRE_RUNNER != '' }}
+    runs-on: ${{ fromJSON(vars.SAPPHIRE_RUNNER || '["self-hosted","sapphire-disabled"]') }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Verify dist output
+        run: |
+          test -f dist/index.js
+          test -d dist/services
+          test -d dist/tools

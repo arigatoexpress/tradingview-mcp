@@ -18,9 +18,7 @@ describe("PineScriptService.validate", () => {
 
     expect(result.valid).toBe(false);
     expect(result.errors).toEqual(
-      expect.arrayContaining([
-        expect.stringContaining("Missing version declaration"),
-      ]),
+      expect.arrayContaining([expect.stringContaining("Missing version declaration")])
     );
   });
 
@@ -30,19 +28,13 @@ describe("PineScriptService.validate", () => {
     expect(result.valid).toBe(false);
     expect(result.errors).toEqual(
       expect.arrayContaining([
-        expect.stringContaining(
-          "Missing indicator(), strategy(), or library() declaration",
-        ),
-      ]),
+        expect.stringContaining("Missing indicator(), strategy(), or library() declaration"),
+      ])
     );
   });
 
   it("accepts a minimal valid v5 indicator with no errors or warnings", () => {
-    const code = [
-      "//@version=5",
-      'indicator("Minimal", overlay=true)',
-      "plot(close)",
-    ].join("\n");
+    const code = ["//@version=5", 'indicator("Minimal", overlay=true)', "plot(close)"].join("\n");
 
     const result = service.validate(code);
 
@@ -82,9 +74,7 @@ describe("PineScriptService.validate", () => {
 
     expect(result.valid).toBe(false);
     expect(result.errors).toEqual(
-      expect.arrayContaining([
-        expect.stringContaining("Unmatched parentheses"),
-      ]),
+      expect.arrayContaining([expect.stringContaining("Unmatched parentheses")])
     );
   });
 });

@@ -108,7 +108,7 @@ export class WebhookServer {
         }
         if (this.onSignalCallback) this.onSignalCallback(signal);
         res.json({ status: "received" });
-      } catch (err) {
+      } catch (_err) {
         res.status(500).json({ error: "Processing failed" });
       }
     });
@@ -140,10 +140,10 @@ export class WebhookServer {
 
     return {
       symbol,
-      action: (String(payload.action || payload.side || payload.order || "UNKNOWN").toUpperCase() as
+      action: String(payload.action || payload.side || payload.order || "UNKNOWN").toUpperCase() as
         | "BUY"
         | "SELL"
-        | "CLOSE"),
+        | "CLOSE",
       indicator: String(payload.indicator || payload.strategy || payload.source || "webhook"),
       confidence: parseFloat(String(payload.confidence || payload.strength || "0.5")),
       timeframe: String(payload.timeframe || payload.interval || payload.tf || "15m"),
@@ -162,9 +162,7 @@ export class WebhookServer {
   }
 
   getSignalsBySymbol(symbol: string, limit: number = 20): WebhookSignal[] {
-    return this.signals
-      .filter((s) => s.symbol.includes(symbol.toUpperCase()))
-      .slice(0, limit);
+    return this.signals.filter((s) => s.symbol.includes(symbol.toUpperCase())).slice(0, limit);
   }
 
   getStats(): Record<string, unknown> {

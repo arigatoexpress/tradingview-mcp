@@ -142,10 +142,7 @@ export class TradingViewClient {
   /**
    * Get technical indicator values from TradingView's built-in calculations
    */
-  async getIndicators(
-    symbol: string,
-    timeframe: string = "1D"
-  ): Promise<IndicatorValues> {
+  async getIndicators(symbol: string, timeframe: string = "1D"): Promise<IndicatorValues> {
     const client = await this.getClient();
 
     return new Promise((resolve, reject) => {
@@ -237,7 +234,7 @@ export class TradingViewClient {
 
     return new Promise((resolve, reject) => {
       TradingView.getScreener(screener)
-        .then((screenerClient: any) => {
+        .then((_screenerClient: unknown) => {
           const result: Record<string, unknown> = { symbol, screener, exchange };
           // Map column results
           columns.forEach((col) => {
@@ -254,8 +251,8 @@ export class TradingViewClient {
    */
   async screen(
     screener: string = "crypto",
-    filters: Record<string, unknown>[] = [],
-    sortBy: string = "volume",
+    _filters: Record<string, unknown>[] = [],
+    _sortBy: string = "volume",
     limit: number = 20
   ): Promise<ScreenerResult[]> {
     return new Promise((resolve, reject) => {

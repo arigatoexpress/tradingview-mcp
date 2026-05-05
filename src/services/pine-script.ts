@@ -18,19 +18,53 @@ export interface PineScriptTemplate {
   category: "indicator" | "strategy" | "library";
 }
 
-const PINE_V5_KEYWORDS = [
-  "indicator", "strategy", "library", "input", "plot", "plotshape",
-  "ta.sma", "ta.ema", "ta.rsi", "ta.macd", "ta.stoch", "ta.bb",
-  "ta.atr", "ta.cci", "ta.mfi", "ta.obv", "ta.vwap",
-  "ta.crossover", "ta.crossunder", "ta.highest", "ta.lowest",
-  "ta.change", "ta.valuewhen", "ta.barssince",
-  "strategy.entry", "strategy.exit", "strategy.close",
-  "strategy.order", "strategy.cancel",
-  "request.security", "request.financial",
-  "math.abs", "math.max", "math.min", "math.round",
-  "str.tostring", "str.format",
-  "array.new_float", "array.push", "array.get",
-  "var", "varip", "export", "import", "switch", "type",
+const _PINE_V5_KEYWORDS = [
+  "indicator",
+  "strategy",
+  "library",
+  "input",
+  "plot",
+  "plotshape",
+  "ta.sma",
+  "ta.ema",
+  "ta.rsi",
+  "ta.macd",
+  "ta.stoch",
+  "ta.bb",
+  "ta.atr",
+  "ta.cci",
+  "ta.mfi",
+  "ta.obv",
+  "ta.vwap",
+  "ta.crossover",
+  "ta.crossunder",
+  "ta.highest",
+  "ta.lowest",
+  "ta.change",
+  "ta.valuewhen",
+  "ta.barssince",
+  "strategy.entry",
+  "strategy.exit",
+  "strategy.close",
+  "strategy.order",
+  "strategy.cancel",
+  "request.security",
+  "request.financial",
+  "math.abs",
+  "math.max",
+  "math.min",
+  "math.round",
+  "str.tostring",
+  "str.format",
+  "array.new_float",
+  "array.push",
+  "array.get",
+  "var",
+  "varip",
+  "export",
+  "import",
+  "switch",
+  "type",
 ];
 
 export class PineScriptService {
@@ -64,7 +98,7 @@ export class PineScriptService {
         l.trim().startsWith("library(")
     );
     if (!hasDeclaration) {
-      errors.push('Missing indicator(), strategy(), or library() declaration.');
+      errors.push("Missing indicator(), strategy(), or library() declaration.");
     }
 
     // Check for common v4 syntax used in v5/v6
@@ -117,9 +151,11 @@ export class PineScriptService {
         if (char === "]") brackets--;
       }
     }
-    if (braces !== 0) errors.push(`Unmatched curly braces: ${braces > 0 ? "missing }" : "extra }"}`);
+    if (braces !== 0)
+      errors.push(`Unmatched curly braces: ${braces > 0 ? "missing }" : "extra }"}`);
     if (parens !== 0) errors.push(`Unmatched parentheses: ${parens > 0 ? "missing )" : "extra )"}`);
-    if (brackets !== 0) errors.push(`Unmatched brackets: ${brackets > 0 ? "missing ]" : "extra ]"}`);
+    if (brackets !== 0)
+      errors.push(`Unmatched brackets: ${brackets > 0 ? "missing ]" : "extra ]"}`);
 
     return {
       valid: errors.length === 0,
@@ -227,15 +263,13 @@ plot(emaValue, "EMA", color=color.orange, linewidth=2)
    */
   generateSapphireStrategy(
     name: string,
-    config: {
+    _config: {
       symbols?: string[];
       timeframes?: string[];
       indicatorLogic?: string;
       webhookUrl?: string;
     } = {}
   ): string {
-    const webhookUrl = config.webhookUrl || "YOUR_SAPPHIRE_WEBHOOK_URL";
-
     return `//@version=5
 strategy("Sapphire: ${name}", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=100, commission_type=strategy.commission.percent, commission_value=0.1)
 

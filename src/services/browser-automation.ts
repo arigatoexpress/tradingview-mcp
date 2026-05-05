@@ -88,7 +88,7 @@ export class BrowserAutomation {
   async captureChart(
     symbol: string,
     timeframe: string = "1D",
-    indicators: string[] = []
+    _indicators: string[] = []
   ): Promise<ChartScreenshot> {
     const page = await this.ensureBrowser();
 
@@ -175,11 +175,13 @@ export class BrowserAutomation {
       await page.waitForTimeout(1000);
 
       // Wait for the alert dialog
-      await page.waitForSelector('[data-name="alerts-create-edit-dialog"]', {
-        timeout: 5000,
-      }).catch(() => {
-        // Try clicking the alert button in the toolbar
-      });
+      await page
+        .waitForSelector('[data-name="alerts-create-edit-dialog"]', {
+          timeout: 5000,
+        })
+        .catch(() => {
+          // Try clicking the alert button in the toolbar
+        });
 
       // Fill in alert condition
       // The exact selectors depend on TradingView's current DOM structure
@@ -193,10 +195,14 @@ export class BrowserAutomation {
 
       // Set webhook URL if provided
       if (config.webhookUrl) {
-        const webhookCheckbox = await page.$('input[name="webhook-toggle"], label:has-text("Webhook URL")');
+        const webhookCheckbox = await page.$(
+          'input[name="webhook-toggle"], label:has-text("Webhook URL")'
+        );
         if (webhookCheckbox) await webhookCheckbox.click();
 
-        const webhookInput = await page.$('input[name="webhook-url"], input[placeholder*="https://"]');
+        const webhookInput = await page.$(
+          'input[name="webhook-url"], input[placeholder*="https://"]'
+        );
         if (webhookInput) await webhookInput.fill(config.webhookUrl);
       }
 
@@ -227,12 +233,16 @@ export class BrowserAutomation {
     await page.waitForTimeout(2000);
 
     // Open alerts panel
-    const alertsTab = await page.$('[data-name="alerts"], [aria-label="Alert"], button:has-text("Alerts")');
+    const alertsTab = await page.$(
+      '[data-name="alerts"], [aria-label="Alert"], button:has-text("Alerts")'
+    );
     if (alertsTab) await alertsTab.click();
     await page.waitForTimeout(1000);
 
     const alerts = await page.evaluate(() => {
-      const alertElements = document.querySelectorAll('[class*="alertItem"], [class*="alert-item"]');
+      const alertElements = document.querySelectorAll(
+        '[class*="alertItem"], [class*="alert-item"]'
+      );
       const results: Array<Record<string, string>> = [];
       alertElements.forEach((el) => {
         const text = el.textContent?.trim() || "";
@@ -397,7 +407,9 @@ export class BrowserAutomation {
         await addInput.fill(symbol);
         await page.waitForTimeout(1000);
         // Click the first result
-        const firstResult = await page.$('[class*="listRow"]:first-child, [class*="resultItem"]:first-child');
+        const firstResult = await page.$(
+          '[class*="listRow"]:first-child, [class*="resultItem"]:first-child'
+        );
         if (firstResult) await firstResult.click();
       }
 
