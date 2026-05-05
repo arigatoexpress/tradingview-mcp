@@ -35,12 +35,19 @@ export function registerPineScriptTools(
     "tv_pine_generate_template",
     "Generate a Pine Script template (indicator, strategy, or library)",
     {
-      type: z.enum(["indicator", "strategy", "library"]).describe("Type of Pine Script to generate"),
+      type: z
+        .enum(["indicator", "strategy", "library"])
+        .describe("Type of Pine Script to generate"),
       name: z.string().describe("Name for the script"),
       version: z.string().optional().default("5").describe("Pine Script version (4, 5, or 6)"),
       overlay: z.boolean().optional().default(true).describe("Whether to overlay on price chart"),
     },
-    async (params: { type: "indicator" | "strategy" | "library"; name: string; version: string; overlay: boolean }) => {
+    async (params: {
+      type: "indicator" | "strategy" | "library";
+      name: string;
+      version: string;
+      overlay: boolean;
+    }) => {
       const code = pineService.generateTemplate(params.type, params.name, {
         version: params.version,
         overlay: params.overlay,

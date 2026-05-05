@@ -5,10 +5,7 @@
 import { z } from "zod";
 import { TradingViewClient } from "../services/tradingview-client.js";
 
-export function registerMarketDataTools(
-  server: any,
-  tvClient: TradingViewClient
-) {
+export function registerMarketDataTools(server: any, tvClient: TradingViewClient) {
   server.tool(
     "tv_get_quote",
     "Get real-time quote/price data for a symbol (e.g., BINANCE:BTCUSDT, NASDAQ:AAPL)",
@@ -48,11 +45,7 @@ export function registerMarketDataTools(
         .optional()
         .default("1D")
         .describe("Timeframe: 1, 5, 15, 30, 60, 240, 1D, 1W, 1M"),
-      count: z
-        .number()
-        .optional()
-        .default(100)
-        .describe("Number of candles to fetch (max 500)"),
+      count: z.number().optional().default(100).describe("Number of candles to fetch (max 500)"),
     },
     async ({ symbol, timeframe, count }: { symbol: string; timeframe: string; count: number }) => {
       try {
@@ -135,10 +128,26 @@ export function registerMarketDataTools(
     "Get TradingView's technical analysis summary — BUY/SELL/NEUTRAL recommendations from oscillators and moving averages",
     {
       symbol: z.string().describe("Symbol ticker (e.g., BTCUSDT)"),
-      screener: z.string().optional().default("crypto").describe("Screener: crypto, america, forex"),
-      exchange: z.string().optional().default("BINANCE").describe("Exchange: BINANCE, NASDAQ, etc."),
+      screener: z
+        .string()
+        .optional()
+        .default("crypto")
+        .describe("Screener: crypto, america, forex"),
+      exchange: z
+        .string()
+        .optional()
+        .default("BINANCE")
+        .describe("Exchange: BINANCE, NASDAQ, etc."),
     },
-    async ({ symbol, screener, exchange }: { symbol: string; screener: string; exchange: string }) => {
+    async ({
+      symbol,
+      screener,
+      exchange,
+    }: {
+      symbol: string;
+      screener: string;
+      exchange: string;
+    }) => {
       try {
         const data = await tvClient.getTechnicalAnalysis(symbol, screener, exchange);
         return {
@@ -172,7 +181,11 @@ export function registerMarketDataTools(
         .optional()
         .default("crypto")
         .describe("Market: crypto, america, forex, cfd"),
-      sortBy: z.string().optional().default("volume").describe("Sort by: volume, change, market_cap"),
+      sortBy: z
+        .string()
+        .optional()
+        .default("volume")
+        .describe("Sort by: volume, change, market_cap"),
       limit: z.number().optional().default(20).describe("Max results"),
     },
     async ({ screener, sortBy, limit }: { screener: string; sortBy: string; limit: number }) => {

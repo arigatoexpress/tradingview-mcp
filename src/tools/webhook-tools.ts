@@ -6,10 +6,7 @@
 import { z } from "zod";
 import { WebhookServer } from "../services/webhook-server.js";
 
-export function registerWebhookTools(
-  server: any,
-  webhookServer: WebhookServer
-) {
+export function registerWebhookTools(server: any, webhookServer: WebhookServer) {
   server.tool(
     "tv_webhook_signals",
     "Get recent TradingView webhook signals received by the listener. These are real-time alerts from your TV strategies.",
