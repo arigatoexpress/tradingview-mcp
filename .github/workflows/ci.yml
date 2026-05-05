@@ -11,13 +11,19 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  # No-spend posture: keep Node tooling on Ari's shared self-hosted runner.
+  AGENT_TOOLSDIRECTORY: /Users/aribs/.github-runners/toolcache
+  RUNNER_TOOL_CACHE: /Users/aribs/.github-runners/toolcache
+
 permissions:
   contents: read
 
 jobs:
   lint:
     name: Lint & Format
-    runs-on: ubuntu-latest
+    if: ${{ vars.SAPPHIRE_RUNNER != '' }}
+    runs-on: ${{ fromJSON(vars.SAPPHIRE_RUNNER || '["self-hosted","sapphire-disabled"]') }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -39,7 +45,8 @@ jobs:
 
   typecheck:
     name: Type Check
-    runs-on: ubuntu-latest
+    if: ${{ vars.SAPPHIRE_RUNNER != '' }}
+    runs-on: ${{ fromJSON(vars.SAPPHIRE_RUNNER || '["self-hosted","sapphire-disabled"]') }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -58,7 +65,8 @@ jobs:
 
   test:
     name: Unit Tests
-    runs-on: ubuntu-latest
+    if: ${{ vars.SAPPHIRE_RUNNER != '' }}
+    runs-on: ${{ fromJSON(vars.SAPPHIRE_RUNNER || '["self-hosted","sapphire-disabled"]') }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -77,7 +85,8 @@ jobs:
 
   build:
     name: Build Verification
-    runs-on: ubuntu-latest
+    if: ${{ vars.SAPPHIRE_RUNNER != '' }}
+    runs-on: ${{ fromJSON(vars.SAPPHIRE_RUNNER || '["self-hosted","sapphire-disabled"]') }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
